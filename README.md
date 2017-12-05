@@ -18,7 +18,6 @@ Templates for [Sourcery](https://github.com/krzysztofzablocki/Sourcery) for depe
 For the following view controller:
 
 ```swift
-```swift
 final class ProfileViewController: UIViewController, StoryboardInitializable {
     var viewModel: ProfileViewModel!
 
@@ -70,7 +69,6 @@ When you add a new implicitly unwrapped optional property to that view controlle
 
 For the following view controller:
 
-```swift
 ```swift
 final class ProfileViewController: UIViewController, StoryboardInitializable {
     var viewModel: ProfileViewModel!

@@ -1,0 +1,71 @@
+<%
+// Usage:
+// 1. Add the following empty protocol to your project:
+// protocol StoryboardInitializable where Self: UIViewController { }
+//
+// 2. Conform view controllers to it.
+// 3. Set up and run SwiftGen (https://github.com/SwiftGen/SwiftGen)
+// 4. Use this template with Sourcery: https://github.com/krzysztofzablocki/Sourcery
+//
+//
+// Author: Arek Holko, MIT LICENSE
+// https://github.com/fastred/StoryboardDependencyInjectionTemplates
+-%>
+<%
+var scene = type["StoryboardScene"];
+var viewControllerToInitializer = {};
+
+scene.containedTypes.forEach(function(enumeration) {
+  enumeration.staticMethods.forEach(function(method) {
+    if (method.returnTypeName) {
+      var nameElements = method.returnTypeName.name.split(".")
+      var nameWithoutModuleName = nameElements[nameElements.length - 1]
+      viewControllerToInitializer[nameWithoutModuleName] = enumeration.name + "." + method.callName + "()";
+    }
+  })
+})
+-%>
+<% types.implementing.StoryboardInitializable.forEach(function(type){ -%>
+// MARK: - <%= type.name -%> - StoryboardDependencyInjection
+extension <%= type.name -%> {
+
+<%
+var allProperties = [];
+var currentType = type;
+
+while (currentType) {
+  allProperties.push.apply(allProperties, currentType.storedVariables);
+  currentType = currentType.supertype;
+}
+var properties = allProperties.filter(function(property) {
+  return property.isImplicitlyUnwrappedOptional &&
+  !property.attributes.IBOutlet &&
+  ["internal", "public", "open"].indexOf(property.writeAccess) > -1
+})
+-%>
+    static func makeFromStoryboard(
+<% properties.forEach(function(property, index){ -%>
+        <%= property.name -%>: <%= property.typeName.unwrappedTypeName -%><% if (index !== properties.length - 1) { %>,<% } %>
+<% }) -%>
+    ) -> <%= type.name -%> {
+        let viewController = <%= viewControllerToInitializer[type.name] %>
+        viewController.setDependencies(
+<% properties.forEach(function(property, index){ -%>
+            <%= property.name -%>: <%= property.name -%><% if (index !== properties.length - 1) { %>,<% } %>
+<% }) -%>
+        )
+        return viewController
+    }
+
+    func setDependencies(
+<% properties.forEach(function(property, index){ -%>
+        <%= property.name -%>: <%= property.typeName.unwrappedTypeName -%><% if (index !== properties.length - 1) { %>,<% } %>
+<% }) -%>
+    ) {
+<% properties.forEach(function(property){ -%>
+        self.<%= property.name %> = <%= property.name %>
+<% }) -%>
+    }
+}
+
+<% }) %>

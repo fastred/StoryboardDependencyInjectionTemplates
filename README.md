@@ -1,8 +1,8 @@
 # StoryboardDependencyInjectionTemplates
 
-Templates for [Sourcery](https://github.com/krzysztofzablocki/Sourcery) for dependency injection for storyboard-based view controllers.
+This repository provides templates for [Sourcery](https://github.com/krzysztofzablocki/Sourcery). They allow you to code generate initializers for storyboard-based view controllers.
 
-## Usage: StoryboardDependencyInjection.ejs
+# StoryboardDependencyInjection.ejs
 
 1. Add the following protocol to your project:
     ```swift
@@ -55,7 +55,7 @@ extension ProfileViewController {
 Now, use `makeFromStoryboard(viewModel:)` to create instances of `ProfileViewController`.
 When you add a new implicitly unwrapped optional property to that view controller, the definition of this method will automatically update, and the Swift compiler will let you know about all call sites needing update.
 
-## Usage: StoryboardDependencyInjectionWithSwiftGen.ejs
+# StoryboardDependencyInjectionWithSwiftGen.ejs
 
 1. Add the following empty protocol to your project:
     ```swift
